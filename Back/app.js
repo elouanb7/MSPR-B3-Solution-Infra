@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const session = require("express-session");
 const ActiveDirectory = require("activedirectory2");
+const { v4: uuidv4 } = require("uuid");
 
 const app = express();
 
@@ -15,6 +16,15 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -46,20 +56,15 @@ app.post("/login", (req, res) => {
     } else {
       req.session.authenticated = true;
       req.session.username = username;
+      req.session.token = uuidv4();
       console.log("Authentification réussie pour l'utilisateur : " + username);
-      findUser(username, (err, user) => {
-        if (err) {
-          res.status(500).send(err);
-        } else {
-          res.send(user);
-        }
-      });
+      console.log(req.session);
+      res.json({ token: req.session.token });
     }
   });
 });
 
 app.get("/logout", (req, res) => {
-  // Vérifier si l'utilisateur est connecté
   if (!req.session.authenticated) {
     res.status(401).send({ error: "Non authentifié." });
   } else {

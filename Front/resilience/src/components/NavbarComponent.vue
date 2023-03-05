@@ -1,12 +1,12 @@
 <template>
   <nav>
     <div id="left">
-      <RouterLink to="/">Nav</RouterLink>
+      <RouterLink to="/">Resilience</RouterLink>
     </div>
     <div id="center">
       <RouterLink to="/">Accueil</RouterLink>
-      <RouterLink to="/">Login</RouterLink>
-      <RouterLink to="/">Mon compte</RouterLink>
+      <RouterLink to="/login">Login</RouterLink>
+      <RouterLink to="/login">Mon compte</RouterLink>
     </div>
     <div id="right">
       <i class="fa-light fa-bell"></i>

@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div id="loginContainer">
     <h2>Connexion</h2>
-    <form @submit.prevent="login">
+    <form @submit.prevent="handleLogin" id="loginForm">
       <div>
-        <label for="username">Nom d'utilisateur:</label>
+        <label for="username">Nom d'utilisateur :</label>
         <input type="text" id="username" v-model="username" required />
       </div>
       <div>
-        <label for="password">Mot de passe:</label>
+        <label for="password">Mot de passe :</label>
         <input type="password" id="password" v-model="password" required />
       </div>
       <button type="submit">Se connecter</button>
@@ -17,8 +17,10 @@
 
 <script>
 import { useToast } from "vue-toastification";
-
+import auth from "../services/auth";
+import router from "@/router";
 const toast = useToast();
+
 export default {
   data() {
     return {
@@ -27,32 +29,36 @@ export default {
     };
   },
   methods: {
-    async login() {
-      try {
-        const response = await fetch("http://localhost:3000/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: this.username + "@resilience.local",
-            password: this.password,
-          }),
-        });
-        const data = await response.json();
-        if (response.status === 200) {
+    handleLogin() {
+      auth
+        .login(this.username, this.password)
+        .then(() => {
           toast.success("Connexion établie avec succès");
-        } else if (response.status === 401) {
-          toast.error("Credentials incorrects");
-        } else {
+          router.push("/profile");
+        })
+        .catch((error) => {
           toast.error("Erreur d'authentification, veuillez réessayer");
-        }
-        console.log(data.message); // Afficher un message de confirmation
-      } catch (error) {
-        console.error(error);
-        // Afficher un message d'erreur à l'utilisateur
-      }
+          console.error(error);
+        });
     },
   },
 };
 </script>
+
+<style>
+#loginContainer {
+  margin: 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#loginForm,
+#loginForm > div,
+#loginForm > button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+</style>

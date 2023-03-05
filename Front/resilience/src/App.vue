@@ -1,10 +1,14 @@
 <script>
 import { defineComponent } from "vue";
 import NavBar from "@/components/NavbarComponent.vue";
-import { RouterView } from "vue-router";
+import { mapStores } from "pinia";
+import { authStore } from "@/stores/authStore";
 
 export default defineComponent({
   components: { NavBar },
+  computed: {
+    ...mapStores(authStore),
+  },
 });
 </script>
 
