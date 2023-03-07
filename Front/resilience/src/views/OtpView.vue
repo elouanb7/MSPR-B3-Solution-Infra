@@ -46,11 +46,9 @@ export default {
       otp
         .otp(this.username, this.password, this.otpCode, this.remember)
         .then(() => {
-          toast.success("Connexion établie avec succès");
           router.push("/profile");
         })
         .catch((error) => {
-          toast.error("Erreur d'authentification, veuillez réessayer");
           console.error(error);
         });
     },

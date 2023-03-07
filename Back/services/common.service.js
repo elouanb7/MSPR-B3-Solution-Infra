@@ -3,7 +3,7 @@ const SENDMAIL = require("../services/mail.service");
 
 exports.send2FAByMail = (email, id) => {
   email = "resilienceclinique@gmail.com";
-  const link = "http://localhost:8080/#/verify/" + id;
+  const link = "*Future lien de connexion/*" + id;
   const msg = {
     to: email,
     from: "Clinique - Le Chatelet <resilienceclinique@gmail.com>",
@@ -25,9 +25,7 @@ exports.sendInformationMail = (email, ip) => {
     to: email,
     from: "Clinique - Le Chatelet <resilienceclinique@gmail.com>",
     subject: "Connexion depuis un nouvel endroit",
-    text:
-      "Une connexion a été éffectué avec succès sur votre compte depuis l'adresse IP: " +
-      ip,
+    text: "Quelqu'un à tenté de se connecter à partir d'une autre IP \n" + ip,
     //html: '<strong>and easy to do anywhere, even with Node.js</strong>',
   };
   SENDMAIL(msg, (info) => {

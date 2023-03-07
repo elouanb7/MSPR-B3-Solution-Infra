@@ -19,9 +19,9 @@
 
 <script>
 import { useToast } from "vue-toastification";
+const toast = useToast();
 import auth from "../services/auth";
 import router from "@/router";
-const toast = useToast();
 
 export default {
   data() {
@@ -36,7 +36,7 @@ export default {
     if (
       this.sessionToken !== "" &&
       this.sessionToken !== null &&
-      this.sessionPassword === null
+      (this.sessionPassword === null || this.sessionPassword === undefined)
     ) {
       return router.push("/profile");
     }
@@ -46,11 +46,9 @@ export default {
       auth
         .login(this.username, this.password)
         .then(() => {
-          toast.warning("Vérification de l'otp requise");
           router.push("/login/otp");
         })
         .catch((error) => {
-          toast.error("Erreur d'authentification, veuillez réessayer");
           console.error(error);
         });
     },
@@ -107,7 +105,7 @@ export default {
 #loginForm input[type="text"],
 #loginForm input[type="password"] {
   padding: 10px;
-  width: 75%;
+  width: 60%;
   margin-bottom: 10px;
   font-size: 1.2em;
   border: 1px solid #ccc;

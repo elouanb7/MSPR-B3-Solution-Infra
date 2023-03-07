@@ -1,10 +1,34 @@
 <template>
   <div>
-    <p>
-      Bonjour
-      {{ userInfos ? userInfos.data.givenName + " " + userInfos.data.sn : "" }}
-    </p>
-    <button @click.prevent="handleLogout">Se déconnecter</button>
+    <div class="user-info">
+      <h2>
+        Bonjour
+        {{
+          userInfos ? userInfos.data.givenName + " " + userInfos.data.sn : ""
+        }}
+      </h2>
+      <ul>
+        <li>
+          <strong>Nom d'utilisateur :</strong>
+          {{ userInfos ? userInfos.data.sAMAccountName : " " }}
+        </li>
+        <li>
+          <strong>Adresse e-mail :</strong>
+          {{ userInfos ? userInfos.data.userPrincipalName : " " }}
+        </li>
+        <li>
+          <strong>Date de création :</strong>
+          {{ userInfos ? userInfos.data.whenCreated : " " }}
+        </li>
+        <li>
+          <strong>Dernière mise à jour du mot de passe :</strong>
+          {{ userInfos ? userInfos.data.pwdLastSet : " " }}
+        </li>
+      </ul>
+    </div>
+    <div class="button-center">
+      <button @click.prevent="handleLogout">Se déconnecter</button>
+    </div>
   </div>
 </template>
 
