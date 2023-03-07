@@ -1,3 +1,4 @@
+/*
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -137,11 +138,5 @@ function findUser(username, callback) {
   });
 }
 
-require("./routes/auth.routes")(app);
-require("./routes/final.routes")(app);
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
-});
-
 function isTwoFactor(username) {}
+*/

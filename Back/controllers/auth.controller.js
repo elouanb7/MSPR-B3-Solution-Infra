@@ -1,9 +1,10 @@
-const config = require("../config/auth.config");
+const config = require("../config/ad.config");
 const bcrypt = require("bcryptjs");
 const db = require("../models");
 const requestIP = require("request-ip");
 const { authenticator } = require("otplib");
 const speakeasy = require("speakeasy");
+const qrcode = require("qrcode");
 const {
   send2FAByMail,
   sendInformationMail,
@@ -24,6 +25,11 @@ const { v4: uuidv4 } = require("uuid");
 };*/
 
 exports.verifyCredentials = async (req, res) => {
+  /*  const secret = speakeasy.generateSecret({ length: 20 });
+  console.log("secret", secret);
+  qrcode.toDataURL(secret.otpauth_url, (err, data) => {
+    console.log("qrcode", data);
+  });*/
   const ad = new ActiveDirectory(config);
   const { username, password } = req.body;
   ad.authenticate(username, password, (err, auth) => {
@@ -39,6 +45,7 @@ exports.verifyCredentials = async (req, res) => {
       req.session.authenticated = true;
       req.session.username = username;
       req.session.token = uuidv4();
+      console.log(req.session);
       console.log("Authentification réussie pour l'utilisateur : " + username);
       res.json({ token: req.session.token, username: req.session.username });
     }
@@ -54,18 +61,18 @@ exports.logout = async (req, res) => {
     return;
   }
   const token = req.headers.authorization.split(" ")[1];
-  if (token !== req.session.token) {
-    res.status(401).send({ error: "Invalid session token" });
-    return;
-  }
+  // if (token !== req.session.token) {
+  //   res.status(401).send({ error: "Invalid session token" });
+  //   return;
+  // }
 
   req.session.destroy(() => {
     res.send({ message: "Logout successful" });
   });
 };
 
-/*exports.verifyOtp = async (req, res) => {
-  // const ad = new ActiveDirectory(config);
+exports.verifyOtp = async (req, res) => {
+  const ad = new ActiveDirectory(config);
   // ad.authenticate(username, password, function(err, auth) {
   //   if (err) {
   //     return res.status(401).send();
@@ -75,75 +82,59 @@ exports.logout = async (req, res) => {
   //   }
   // });
 
-  const user = {
-    password: bcrypt.hashSync('P@ssword', 8)
-  }
-  if (!user || !req.body.login || !req.body.otpCode) {
-    return res.status(401).send();
-  }
-  const passwordIsValid = bcrypt.compareSync(
-    req.body.password,
-    user.password
-  );
-  if (!passwordIsValid) {
-    return res.status(401).send();
+  const { username, password, otpCode, remember } = req.body;
+
+  if (!username || !password || !otpCode) {
+    return res.status(401).send("nul germain");
   }
 
-  const userOtp = await db.User.findOne({where: { email: req.body.login}});
+  const userOtp = await db.User.findOne({
+    where: { username: username },
+  });
+
   const verifiedOtp = speakeasy.totp.verify({
     secret: userOtp.otp_base32,
     encoding: "base32",
-    token: req.body.otpCode
+    token: otpCode,
   });
-  if(!verifiedOtp){
+  if (!verifiedOtp) {
     return res.status(401).send();
   }
 
   const logConnection = await db.LogConnection.findAll({
     where: {
-      useragent: req.headers['user-agent'],
-    }
+      useragent: req.headers["user-agent"],
+    },
   });
 
-  if(logConnection.length < 1 || logConnection.filter(log => log.isVerified === true).length < 1) {
+  if (
+    logConnection.length < 1 ||
+    logConnection.filter((log) => log.isVerified === true).length < 1
+  ) {
     const newLogConnection = await db.LogConnection.create({
-      user_id: req.body.login,
-      useragent: req.headers['user-agent'],
-      ip: requestIP.getClientIp(req)
+      user_id: username,
+      useragent: req.headers["user-agent"],
+      ip: requestIP.getClientIp(req),
     });
-    send2FAByMail(req.body.login, newLogConnection.id);
+    send2FAByMail(username, newLogConnection.id);
     return res.status(202).send();
   }
 
+  if (
+    logConnection.filter((log) => log.ip === requestIP.getClientIp(req))
+      .length < 1
+  ) {
+    sendInformationMail(username, requestIP.getClientIp(req));
 
-  if(logConnection.filter(log => log.ip === requestIP.getClientIp(req)).length < 1){
-    sendInformationMail(req.body.login, requestIP.getClientIp(req));
-
-    if(req.body.remember === true) {
+    if (remember === true) {
       await db.LogConnection.create({
-        user_id: req.body.login,
-        useragent: req.headers['user-agent'],
-        ip: requestIP.getClientIp(req)
+        user_id: username,
+        useragent: req.headers["user-agent"],
+        ip: requestIP.getClientIp(req),
       });
     }
   }
-
-  const token = jwt.sign({ id: user.id }, config.secret, {
-    expiresIn: 86400
-  });
-
   res.status(200).send({
-    accessToken: token
+    accessToken: req.session.token,
   });
-
-}*/
-//
-// exports.verifyByMail = async (req, res) => {
-//   const logConnection = await db.LogConnection.findByPk(req.params.idLogConnection);
-//
-//   if(!logConnection) {
-//     return res.status(404).send();
-//   }
-//   await logConnection.update({ isVerified: true })
-//   res.send();
-// }
+};

@@ -11,9 +11,9 @@ module.exports = function (app) {
 
   app.post("/api/auth/login", controller.verifyCredentials);
 
-  app.post("/api/auth/logout", controller.logout);
+  app.get("/api/auth/logout", controller.logout);
 
-  /*  app.post("/api/auth/otp", controller.verifyOtp);*/
+  app.post("/api/auth/otp", controller.verifyOtp);
 
   // app.get("/api/auth/verify-auth/:idLogConnection", controller.verifyByMail);
 

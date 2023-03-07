@@ -1,18 +1,17 @@
-/*
 module.exports = (sequelize, Sequelize) => {
   const LogConnection = sequelize.define("log_connection", {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
       allowNull: false,
-      primaryKey: true
+      primaryKey: true,
     },
     user_id: {
       type: Sequelize.STRING,
       allowNull: false,
     },
     useragent: {
-      type: Sequelize.STRING
+      type: Sequelize.STRING,
     },
     ip: {
       type: Sequelize.STRING,
@@ -21,9 +20,9 @@ module.exports = (sequelize, Sequelize) => {
     isVerified: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
-      defaultValue: false
-    }
+      defaultValue: false,
+    },
   });
 
   return LogConnection;
-};*/
+};

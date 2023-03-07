@@ -1,25 +1,23 @@
 <template>
   <div id="loginContainer">
-    <h2>Connexion</h2>
-    <form @submit.prevent="handleLogin" id="loginForm">
+    <h2>Connexion avec OTP</h2>
+    <form @submit.prevent="handleOtp" id="otpForm">
       <div>
-        <label for="username">Nom d'utilisateur :</label>
-        <input type="text" id="username" v-model="username" required />
+        <label for="otpCode">6 digits code</label>
+        <input type="text" id="otpCode" v-model="otpCode" required />
       </div>
       <div>
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" v-model="password" required />
+        <label for="remember">Se souvenir de cet ordinateur</label>
+        <input type="checkbox" id="remember" v-model="remember" required />
       </div>
-      <div class="button-center">
-        <button type="submit">Se connecter</button>
-      </div>
+      <div class="button-center"><button type="submit">Vérifier</button></div>
     </form>
   </div>
 </template>
 
 <script>
 import { useToast } from "vue-toastification";
-import auth from "../services/auth";
+import otp from "../services/otp";
 import router from "@/router";
 const toast = useToast();
 
@@ -28,6 +26,8 @@ export default {
     return {
       username: "",
       password: "",
+      otpCode: "",
+      remember: false,
     };
   },
   created() {
@@ -42,12 +42,12 @@ export default {
     }
   },
   methods: {
-    handleLogin() {
-      auth
-        .login(this.username, this.password)
+    handleOtp() {
+      otp
+        .otp(this.username, this.password, this.otpCode, this.remember)
         .then(() => {
-          toast.warning("Vérification de l'otp requise");
-          router.push("/login/otp");
+          toast.success("Connexion établie avec succès");
+          router.push("/profile");
         })
         .catch((error) => {
           toast.error("Erreur d'authentification, veuillez réessayer");
@@ -74,6 +74,7 @@ export default {
   align-items: center;
   margin-bottom: 1rem;
 }*/
+
 #loginContainer {
   display: flex;
   flex-direction: column;
@@ -85,41 +86,42 @@ export default {
 #loginContainer h2 {
   font-size: 2em;
   margin-bottom: 20px;
-  color: #fff; /* Couleur blanche */
-  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3); /* Ombre de texte pour le rendre plus visible */
+  color: #fff;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-#loginForm {
-  width: 700px;
+#otpForm {
+  width: 600px;
   background-color: #fff;
   padding: 30px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
 }
 
-#loginForm label {
+#otpForm label {
   display: block;
   margin-bottom: 10px;
   font-size: 1.2em;
   color: #3c4d6b;
 }
 
-#loginForm input[type="text"],
-#loginForm input[type="password"] {
+#otpForm input[type="text"],
+#otpForm input[type="password"],
+#otpForm input[type="checkbox"] {
   padding: 10px;
-  width: 75%;
+  width: 50%;
   margin-bottom: 10px;
   font-size: 1.2em;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-#loginForm input[type="text"]:focus,
-#loginForm input[type="password"]:focus {
+#otpForm input[type="text"]:focus,
+#otpForm input[type="password"]:focus {
   border-color: #3c4d6b;
 }
 
-#loginForm button[type="submit"] {
+#otpForm button[type="submit"] {
   background-color: green;
   color: #fff;
   border: none;
@@ -131,23 +133,23 @@ export default {
   transition: background-color 0.3s ease;
 }
 
-#loginForm button[type="submit"]:hover {
-  background-color: green;
-  align-items: center;
+#otpForm button[type="submit"]:hover {
+  background-color: darkgreen;
 }
 
-#loginForm div {
+#otpForm div {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
   font-size: 1.2em;
   justify-content: space-between;
 }
-#loginForm div.button-center {
+
+#otpForm div.button-center {
   justify-content: center;
 }
 
-#loginForm div label {
+#otpForm div label {
   margin-right: 10px;
   color: #3c4d6b;
 }

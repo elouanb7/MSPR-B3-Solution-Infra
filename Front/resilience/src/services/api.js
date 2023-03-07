@@ -1,12 +1,11 @@
 import axios from "axios";
-import { authStore } from "@/stores/authStore";
 
 const instance = axios.create({
   withCredentials: false,
 });
 
 instance.interceptors.request.use((config) => {
-  const sessionToken = authStore.getToken;
+  const sessionToken = localStorage.getItem("token");
   if (sessionToken) {
     config.headers.Authorization = `Bearer ${sessionToken}`;
   }

@@ -9,10 +9,7 @@
       <RouterLink to="/login">Mon compte</RouterLink>
     </div>
     <div id="right">
-      <i class="fa-light fa-bell"></i>
-      <!--      <RouterLink to="/inscription"-->
-      <!--        ><i class="fa-light fa-user"></i-->
-      <!--      ></RouterLink>-->
+      <RouterLink to="/profile"><i class="fa-light fa-user"></i></RouterLink>
     </div>
   </nav>
 </template>

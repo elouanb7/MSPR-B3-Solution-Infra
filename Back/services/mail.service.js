@@ -6,8 +6,8 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "contact.clinique.lechatelet@gmail.com",
-    pass: "hcbqgqferznwrlcg",
+    user: "resilienceclinique@gmail.com",
+    pass: "atnbnfgjoasefnjp",
   },
 });
 

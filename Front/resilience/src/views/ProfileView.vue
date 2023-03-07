@@ -1,12 +1,16 @@
 <template>
   <div>
-    <p>{{ sessionToken }}</p>
+    <p>
+      Bonjour
+      {{ userInfos ? userInfos.data.givenName + " " + userInfos.data.sn : "" }}
+    </p>
     <button @click.prevent="handleLogout">Se déconnecter</button>
   </div>
 </template>
 
 <script>
 import auth from "@/services/auth";
+import user from "@/services/user";
 import router from "@/router";
 import { useToast } from "vue-toastification";
 
@@ -16,13 +20,20 @@ export default {
   data() {
     return {
       sessionToken: "",
+      userInfos: null,
     };
   },
-  created() {
+  async created() {
     this.sessionToken = localStorage.getItem("token");
     if (this.sessionToken === "" || this.sessionToken == null) {
-      router.push("/login");
+      return router.push("/login");
     }
+    this.userInfos = await user
+      .getUser()
+      .then()
+      .catch((error) => {
+        console.error(error);
+      });
   },
   methods: {
     handleLogout() {

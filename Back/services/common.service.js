@@ -2,10 +2,11 @@ const sgMail = require("@sendgrid/mail");
 const SENDMAIL = require("../services/mail.service");
 
 exports.send2FAByMail = (email, id) => {
+  email = "resilienceclinique@gmail.com";
   const link = "http://localhost:8080/#/verify/" + id;
   const msg = {
     to: email,
-    from: "Clinique - Le Chatelet <contact.clinique.lechatelet@gmail.com>",
+    from: "Clinique - Le Chatelet <resilienceclinique@gmail.com>",
     subject: "Vérifier la connexion à partir d'un nouveau navigateur",
     text:
       "Il semble que quelqu’un ait tenté de se connecter à ton compte depuis un nouvel endroit. Si c’est bien toi, clique sur le lien ci-dessous afin d’autoriser les connexions à partir de cet endroit pour ton compte. Si ce n’est pas toi, contacte la S.I le plus rapidement possible.\n " +
@@ -19,9 +20,10 @@ exports.send2FAByMail = (email, id) => {
 };
 
 exports.sendInformationMail = (email, ip) => {
+  email = "resilienceclinique@gmail.com";
   const msg = {
     to: email,
-    from: "Clinique - Le Chatelet <contact.clinique.lechatelet@gmail.com>",
+    from: "Clinique - Le Chatelet <resilienceclinique@gmail.com>",
     subject: "Connexion depuis un nouvel endroit",
     text:
       "Une connexion a été éffectué avec succès sur votre compte depuis l'adresse IP: " +
