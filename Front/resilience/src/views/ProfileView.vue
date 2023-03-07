@@ -76,4 +76,55 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.user-info {
+  margin: 20px;
+  padding: 20px;
+  border: 1px solid white;
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+}
+
+.user-info h2 {
+  margin-bottom: 10px;
+}
+
+.user-info ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.user-info li {
+  margin-bottom: 10px;
+}
+
+.user-info li strong {
+  font-weight: bold;
+  margin-right: 10px;
+}
+.button-center {
+  display: flex;
+  justify-content: center;
+}
+
+button {
+  background-color: red;
+  color: white;
+
+  border: none;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: background-color 0.3s ease;
+  justify-content: center;
+}
+
+button:hover {
+  background-color: #ff3e3e;
+  color: white;
+  align-items: center;
+}
+</style>

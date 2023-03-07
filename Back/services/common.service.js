@@ -9,9 +9,9 @@ exports.send2FAByMail = (email, id) => {
     from: "Clinique - Le Chatelet <resilienceclinique@gmail.com>",
     subject: "Vérifier la connexion à partir d'un nouveau navigateur",
     text:
-      "Il semble que quelqu’un ait tenté de se connecter à ton compte depuis un nouvel endroit. Si c’est bien toi, clique sur le lien ci-dessous afin d’autoriser les connexions à partir de cet endroit pour ton compte. Si ce n’est pas toi, contacte la S.I le plus rapidement possible.\n " +
+      "Quelqu'un à tenté de se connecter à partir d'un autre navigateur\n" +
       link,
-    //html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+    //html: '<strong>and easy to do anywhere, even with e.js</strong>',
   };
   SENDMAIL(msg, (info) => {
     console.log("Email sent successfully");
