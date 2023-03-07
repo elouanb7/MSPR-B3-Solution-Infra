@@ -9,11 +9,26 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cors());
+
 app.use(
   session({
-    secret: "mysecret",
+    name: "qid",
+    secret: "superdupersecret",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24 * 365,
+    },
+  })
+);
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["POST", "PUT", "GET", "OPTIONS", "HEAD"],
+    credentials: true,
   })
 );
 
@@ -44,6 +59,19 @@ const ad = new ActiveDirectory({
 app.post("/login", (req, res) => {
   const { username, password } = req.body;
 
+  findUser(username, function (err) {
+    if (err) {
+      res.status(404).send(err);
+    }
+  });
+
+  // const is2FA = isTwoFactor(username);
+  // if (is2FA === true) {
+  //   setupTwoFactor(username);
+  // } else {
+  //   setupTwoFactor(username);
+  // }
+
   ad.authenticate(username, password, (err, auth) => {
     if (err) {
       console.log("Erreur d'authentification : " + JSON.stringify(err));
@@ -58,21 +86,40 @@ app.post("/login", (req, res) => {
       req.session.username = username;
       req.session.token = uuidv4();
       console.log("Authentification réussie pour l'utilisateur : " + username);
-      console.log(req.session);
-      res.json({ token: req.session.token });
+      res.json({ token: req.session.token, username: req.session.username });
     }
   });
 });
 
 app.get("/logout", (req, res) => {
-  if (!req.session.authenticated) {
-    res.status(401).send({ error: "Non authentifié." });
-  } else {
-    // Détruire la session
-    req.session.destroy(() => {
-      res.send({ message: "Déconnexion réussie." });
-    });
+  console.log(req.session);
+  if (
+    !req.headers.authorization ||
+    !req.headers.authorization.startsWith("Bearer ")
+  ) {
+    res.status(401).send({ error: "Unauthorized" });
+    return;
   }
+  const token = req.headers.authorization.split(" ")[1];
+  if (token !== req.session.token) {
+    res.status(401).send({ error: "Invalid session token" });
+    return;
+  }
+
+  req.session.destroy(() => {
+    res.send({ message: "Logout successful" });
+  });
+});
+
+app.get("/user/:username", function (req, res) {
+  const username = req.params.username;
+  findUser(username, function (err, user) {
+    if (err) {
+      res.status(404).send(err);
+    } else {
+      res.send(user);
+    }
+  });
 });
 
 function findUser(username, callback) {
@@ -89,3 +136,12 @@ function findUser(username, callback) {
     }
   });
 }
+
+require("./routes/auth.routes")(app);
+require("./routes/final.routes")(app);
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
+
+function isTwoFactor(username) {}
